@@ -53,7 +53,7 @@ PUT /civil-code-index?pretty
                 }
             }
         },
-        "secction": {
+        "section": {
             "properties": {
                 "levelUnit": {
                     "type": "keyword"

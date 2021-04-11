@@ -112,7 +112,7 @@ public class CivilCodeManageServiceImpl implements CivilCodeManageService {
                             newItem.setCodification(codification);
                             newItem.setSubCodification(subCodification);
                             newItem.setChapter(chapter);
-                            newItem.setSecction(section);
+                            newItem.setSection(section);
                             newItem.setItem(item);
 
                             items.add(newItem);

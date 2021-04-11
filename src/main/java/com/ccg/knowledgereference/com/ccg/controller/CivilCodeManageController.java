@@ -21,7 +21,7 @@ public class CivilCodeManageController {
 
     @GetMapping("/import")
     public String importCivilCode(@RequestParam String path){
-        // path = "C:\\Users\\Adamo_chen\\Desktop\\民法典.md";
+         path = "C:\\Users\\Adamo_chen\\Desktop\\民法典.md";
         boolean r = civilCodeManageService.importData(path);
         return "success";
     }

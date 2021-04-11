@@ -22,7 +22,7 @@ public class CivilCodeItem {
     /**
      * 节
      */
-    private CivilCodeNode secction;
+    private CivilCodeNode section;
 
     /**
      * 条
