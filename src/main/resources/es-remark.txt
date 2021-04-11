@@ -125,3 +125,30 @@ GET /civil-code-index/_search
     }
   }
 }
+
+# term query
+GET /civil-code-index/_search
+{
+  "query": {
+    "term": {
+      "item.num": {
+        "value": "30"
+      }
+    }
+  }
+}
+
+# ids
+GET /civil-code-index/_search?pretty
+{
+
+  "query": {
+
+    "ids" : {
+
+      "values" : ["1", "4", "100"]
+
+    }
+
+  }
+}
