@@ -1,0 +1,127 @@
+# 删除
+ DELETE /civil-code-index?pretty
+
+GET /civil-code-index/_mapping
+
+# 民法典 mapping
+PUT /civil-code-index?pretty
+{
+    "mappings": {
+        "properties": {
+        "codification": {
+            "properties": {
+                "levelUnit": {
+                    "type": "keyword"
+                },
+                "num": {
+                    "type": "integer"
+                },
+                "originalValue": {
+                    "type": "text",
+                    "analyzer": "ik_smart",
+                    "search_analyzer": "ik_smart"
+                }
+            }
+        },
+        "subCodification": {
+            "properties": {
+                "levelUnit": {
+                    "type": "keyword"
+                },
+                "num": {
+                    "type": "integer"
+                },
+                "originalValue": {
+                    "type": "text",
+                    "analyzer": "ik_smart",
+                    "search_analyzer": "ik_smart"
+                }
+            }
+        },
+        "chapter": {
+            "properties": {
+                "levelUnit": {
+                    "type": "keyword"
+                },
+                "num": {
+                    "type": "integer"
+                },
+                "originalValue": {
+                    "type": "text",
+                    "analyzer": "ik_smart",
+                    "search_analyzer": "ik_smart"
+                }
+            }
+        },
+        "secction": {
+            "properties": {
+                "levelUnit": {
+                    "type": "keyword"
+                },
+                "num": {
+                    "type": "integer"
+                },
+                "originalValue": {
+                    "type": "text",
+                    "analyzer": "ik_smart",
+                    "search_analyzer": "ik_smart"
+                }
+            }
+        },
+        "item": {
+            "properties": {
+                "levelUnit": {
+                    "type": "keyword"
+                },
+                "num": {
+                    "type": "integer"
+                },
+                "originalValue": {
+                    "type": "text",
+                    "analyzer": "ik_smart",
+                    "search_analyzer": "ik_smart"
+                }
+            }
+        }
+    }
+}
+}
+
+PUT /civil-code-index/_doc/1
+{
+	"chapter": {
+		"levelUnit": "CHAPTER",
+		"num": 2,
+		"originalValue": "第二章　合同的订立"
+	},
+	"item": {
+		"levelUnit": "ITEM",
+		"num": 491,
+		"originalValue": "第四百九十一条　当事人采用信件、数据电文等形式订立合同要求签订确认书的，签订确认书时合同成立。当事人一方通过互联网等信息网络发布的商品或者服务信息符合要约条件的，对方选择该商品或者服务并提交订单成功时合同成立，但是当事人另有约定的除外。"
+	},
+	"subCodification": {
+		"levelUnit": "SUB_CODIFICATION",
+		"num": 1,
+		"originalValue": "第一分编　通则"
+	},
+	"codification": {
+		"levelUnit": "CODIFICATION",
+		"num": 3,
+		"originalValue": "第三编　合同"
+	}
+}
+
+#
+GET /civil-code-index/_search
+{
+  "from": 2,
+  "size": 2,
+  "query": {
+    "match": {
+      "item.originalValue": {
+        "query": "领养",
+        "fuzziness": "5"
+      }
+    }
+  }
+}
