@@ -114,17 +114,23 @@ PUT /civil-code-index/_doc/1
 #
 GET /civil-code-index/_search
 {
-  "from": 2,
-  "size": 2,
+  "from": 1,
+  "size": 10,
   "query": {
     "match": {
       "item.originalValue": {
-        "query": "领养",
-        "fuzziness": "5"
+        "query": "领养合同",
+        "fuzziness": "auto"
       }
+    }
+  },
+  "highlight": {
+    "fields": {
+      "item.originalValue": {"type": "plain"}
     }
   }
 }
+
 
 # term query
 GET /civil-code-index/_search

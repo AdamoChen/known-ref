@@ -16,12 +16,18 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.text.Text;
+import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.IntervalsSourceProvider;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.stereotype.Service;
 
@@ -157,7 +163,15 @@ public class CivilCodeManageServiceImpl implements CivilCodeManageService {
             if (from != null) {
                 searchSourceBuilder.from(from);
             }
-            searchSourceBuilder.query(QueryBuilders.matchQuery(ITEM_ORIGINAL_VALUE, content));
+            // 高亮
+            HighlightBuilder highlightBuilder = new HighlightBuilder();
+            highlightBuilder.field(ITEM_ORIGINAL_VALUE).highlighterType("plain");
+
+            // match & 模糊查询
+            MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery(ITEM_ORIGINAL_VALUE, content)
+                    .fuzziness(Fuzziness.AUTO);
+            searchSourceBuilder.query(matchQueryBuilder)
+                    .highlighter(highlightBuilder);
             searchRequest.source(searchSourceBuilder);
             SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
 
@@ -166,7 +180,18 @@ public class CivilCodeManageServiceImpl implements CivilCodeManageService {
                 List<CivilCodeItem> result = new LinkedList<>();
                 for (SearchHit hit : hits.getHits()) {
                     Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-                    result.add(JSONObject.parseObject(JSONObject.toJSONString(sourceAsMap), CivilCodeItem.class));
+                    CivilCodeItem civilCodeItem = JSONObject.parseObject(JSONObject.toJSONString(sourceAsMap), CivilCodeItem.class);
+                    // 需要在这里填充 highlight 内容
+                    Map<String, HighlightField> highlightFieldMap = hit.getHighlightFields();
+                    HighlightField highlightField = highlightFieldMap.get(ITEM_ORIGINAL_VALUE);
+                    String highlightContent = null;
+                    if (highlightField.getFragments() != null && highlightField.getFragments().length > 0) {
+                        highlightContent = highlightField.getFragments()[0].toString();
+                    }
+                    if (civilCodeItem.getItem() != null) {
+                        civilCodeItem.getItem().setOriginalValue(highlightContent);
+                    }
+                    result.add(civilCodeItem);
                 }
                 return result;
             }
