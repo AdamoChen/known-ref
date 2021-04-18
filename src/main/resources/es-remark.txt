@@ -1,4 +1,4 @@
-# 删除
+# 删除 测试
  DELETE /civil-code-index?pretty
 
 GET /civil-code-index/_mapping
