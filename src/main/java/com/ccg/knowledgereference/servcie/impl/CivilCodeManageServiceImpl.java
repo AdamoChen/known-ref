@@ -5,6 +5,7 @@ import com.ccg.knowledgereference.com.ccg.controller.com.ccg.ConvertUtil;
 import com.ccg.knowledgereference.com.ccg.controller.constant.CivilCodeUnitEnum;
 import com.ccg.knowledgereference.com.ccg.controller.dto.CivilCodeItem;
 import com.ccg.knowledgereference.com.ccg.controller.dto.CivilCodeNode;
+import com.ccg.knowledgereference.config.EsConfig;
 import com.ccg.knowledgereference.servcie.CivilCodeManageService;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +49,9 @@ import static com.ccg.knowledgereference.com.ccg.controller.constant.CivilCodeUn
 @Service
 @Slf4j
 public class CivilCodeManageServiceImpl implements CivilCodeManageService {
+
+    @Autowired
+    private EsConfig esConfig;
 
     /**
      * 分编 仅用于划分章， 但章依然属于编  每一新编 会重新从1开始  分编仅第2 3编存在。
@@ -151,10 +156,11 @@ public class CivilCodeManageServiceImpl implements CivilCodeManageService {
 
     @Override
     public List<CivilCodeItem> fullTextQuery(String content, Integer from, Integer size) throws IOException {
+        log.info("full text query: {} - {} - {}", content, from, size);
         RestHighLevelClient client = null;
         try {
             client = new RestHighLevelClient(
-                    RestClient.builder(new HttpHost("localhost", 9200, "http")));
+                    RestClient.builder(new HttpHost(esConfig.getHost(), esConfig.getPort(), "http")));
             SearchRequest searchRequest = new SearchRequest(CIVIL_CODE_INDEX);
             SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
             if(size != null && size > 0){
@@ -208,7 +214,7 @@ public class CivilCodeManageServiceImpl implements CivilCodeManageService {
         RestHighLevelClient client = null;
         try {
             client = new RestHighLevelClient(
-                    RestClient.builder(new HttpHost("localhost", 9200, "http")));
+                    RestClient.builder(new HttpHost(esConfig.getHost(), esConfig.getPort(), "http")));
             SearchRequest searchRequest = new SearchRequest(CIVIL_CODE_INDEX);
             SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
@@ -240,7 +246,7 @@ public class CivilCodeManageServiceImpl implements CivilCodeManageService {
         try {
             // TODO 复用client
             client = new RestHighLevelClient(
-                    RestClient.builder(new HttpHost("localhost", 9200, "http")));
+                    RestClient.builder(new HttpHost(esConfig.getHost(), esConfig.getPort(), "http")));
             for (CivilCodeItem item : items) {
                 IndexRequest request = new IndexRequest(CIVIL_CODE_INDEX);
                 request.id(item.getItem().getNum() + "");

@@ -26,16 +26,5 @@ public class CivilCodeManageController {
         return "success";
     }
 
-    @GetMapping("/fullTextQuery")
-    public List<CivilCodeItem> fullTextQuery(@RequestParam String content, @RequestParam(required = false) Integer from,
-                                             @RequestParam(required = false) Integer size) throws IOException {
-         return civilCodeManageService.fullTextQuery(content, from, size);
-//        return "success";
-    }
 
-    @GetMapping("/rangeByItemNum")
-    public List<CivilCodeItem> rangeById(int start, int end) throws IOException {
-        return civilCodeManageService.rangeById(start, end);
-//        return "success";
-    }
 }

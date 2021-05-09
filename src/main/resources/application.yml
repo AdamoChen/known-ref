@@ -1,0 +1,6 @@
+server:
+  port: 8080
+#  context-path: /home
+es:
+  host: localhost
+  port: 9200
